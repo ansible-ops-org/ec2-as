@@ -1,0 +1,4 @@
+---
+# tasks file for delete-old-amis
+
+include_tasks: dami.yml

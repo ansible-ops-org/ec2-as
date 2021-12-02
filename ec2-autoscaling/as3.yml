@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Create an ec2 launch template
+      community.aws.ec2_launch_template:
+        region: "us-east-1"
+        name: "test3"
+        image_id: "ami-0f1daa88c593aeb80"
+        key_name: "vpn41"
+        instance_type: "t2.micro"
+        iam_instance_profile: "noaccess"
+        security_group_ids: "sg-05c55cf0c97047633"
+      register: lc
+
+
+    - name:  create asg
+      shell: "aws autoscaling create-auto-scaling-group --auto-scaling-group-name test3 --launch-template LaunchTemplateName=test3 --min-size 1 --max-size 2 --health-check-type EC2 --health-check-grace-period 300 --vpc-zone-identifier subnet-085115e3dea5098f9,subnet-0713c84aef9a72c42"
+
+

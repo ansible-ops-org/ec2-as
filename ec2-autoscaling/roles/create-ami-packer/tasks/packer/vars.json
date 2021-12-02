@@ -1,0 +1,15 @@
+{
+
+"aws_access": "",
+"aws_secret": "",
+"region": "us-east-1",
+"zones": "us-east-1a",
+"instance_type": "t2.micro",
+"ssh_username": "ec2-user",
+"ssh_key": "vpn41.pem",
+"ami_id": "ami-b80",
+"public_subnet_id": "subnet-21d",
+"vpc_id": "vpc-383",
+"sg": "sg-bb0"
+
+}

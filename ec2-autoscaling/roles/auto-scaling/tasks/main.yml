@@ -1,0 +1,7 @@
+---
+# tasks file for auto-scaling
+
+
+- include_tasks: as-lt.yml
+
+#- include_tasks: as-lc.yml  

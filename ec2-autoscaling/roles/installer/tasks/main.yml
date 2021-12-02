@@ -1,0 +1,4 @@
+---
+# tasks file for ws
+
+- include_tasks: ws.yml

@@ -1,0 +1,17 @@
+---
+# roles/create-ami/tasks/main.yml
+- name: Validate Packer Config
+  shell: packer validate -var-file=/etc/ansible/ec2-autoscaling/roles/create-ami-packer/tasks/packer/vars.json /etc/ansible/ec2-autoscaling/roles/create-ami-packer/tasks/packer/pck.json 
+  register: validate
+
+- name: print output of validation  
+  debug:
+    msg: "{{ validate }}"
+
+- name: Build Ami By Packer 
+  shell: packer build -var-file=/etc/ansible/ec2-autoscaling/roles/create-ami-packer/tasks/packer/vars.json /etc/ansible/ec2-autoscaling/roles/create-ami-packer/tasks/packer/pck.json
+  register: build
+  
+- name: print output of validation
+  debug:
+    msg: "{{ build }}"      

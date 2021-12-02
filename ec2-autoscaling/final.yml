@@ -1,0 +1,9 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+    - role: create-ami-packer, asg_name: "{{ group_name }}"
+    - role: auto-scaling, asg_name: "{{ group_name }}", instances_max: 1
+    

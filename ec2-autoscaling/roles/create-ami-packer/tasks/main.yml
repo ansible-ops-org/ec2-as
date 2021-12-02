@@ -1,0 +1,5 @@
+---
+# tasks file for create-ami
+
+
+- include_tasks: ami.yml

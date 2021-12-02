@@ -1,0 +1,21 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Find latest AMI  
+      ec2_ami_info:
+        owners: 758637906269
+        region: us-east-1
+        filters:
+          name: "ssm_v1-*"
+      register: findami  
+    
+    - name: print out AMIs to terminal window
+      debug:
+        var: findami
+    - name: Sort the latest AMI 
+      set_fact:
+        latest_ami: >
+          {{ findami.images | sort(attribute='creation_date') | last }}     

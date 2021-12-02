@@ -1,0 +1,51 @@
+---
+
+- name: Update all installed packages using YUM module
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+    update_only: yes
+  register: yum_update_status
+
+- name: Remove unwanted packages
+  yum:
+    autoremove: yes
+        
+
+- name: Remove packages
+  yum: pkg={{item}} state=absent
+  loop: [ vim, elinks, telnet, nginx , nmap ]
+            
+
+- name: Install Packages
+  yum:
+    state: present
+    name:
+      - elinks
+      - vim 
+      - epel-release  
+      - nmap
+      - nginx
+      - telnet
+
+
+      
+- name: Removing Python libraries
+  pip:
+    name: SciPy,netaddr
+    state: absent      
+      
+      
+- name: Installing Python libraries
+  pip: 
+    name: NumPy,SciPy,netaddr
+    state: present
+         
+
+
+
+
+
+
+

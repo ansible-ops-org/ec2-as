@@ -1,0 +1,60 @@
+
+
+- name: gather information about an AMI using ami-id
+  amazon.aws.ec2_ami_info:
+    image_ids: ami-b80
+  register: instance
+
+
+
+
+- debug: 
+    msg: "{{ instance }}"
+
+
+- debug: var=instance.images[0].image_id
+    
+
+
+- name: gather information about an AMI using ami-id
+  amazon.aws.ec2_ami_info:
+    filters:
+      "tag:Name": ssm_v1
+  register: ami_id  
+
+- name: print ami_id_2
+  debug:
+    msg: "{{ ami_id }}"
+  
+
+
+
+- name: Launch new instance
+  ec2:
+    region: "{{ region }}"
+    keypair: "{{ keypair }}"
+    zone: "{{ zone }}"
+    group: "{{ security_groups }}"
+    image: "{{ ami_result.results[0].ami_id }}"
+    instance_type: "{{ instance_type }}"
+    instance_tags:
+      Name: "{{ name }}"
+    volumes: "{{ volumes }}"
+    wait: yes
+  register: ec2
+ 
+- name: Add new instances to host group
+  add_host:
+    name: "{{ item.public_dns_name }}"
+    groups: "{{ name }}"
+    ec2_id: "{{ item.id }}"
+  with_items: ec2.instances
+ 
+- name: Wait for instance to boot
+  wait_for:
+    host: "{{ item.public_dns_name }}"
+    port: 22
+    delay: 30
+    timeout: 300
+    state: started
+  with_items: ec2.instances

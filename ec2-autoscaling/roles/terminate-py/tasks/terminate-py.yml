@@ -1,0 +1,3 @@
+---
+- name: Terminate Running Instances in AWS
+  shell: "python /etc/ansible/ec2-autoscaling/roles/terminate-py/tasks/terminate.py"

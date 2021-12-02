@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Gather information about running instances
+      shell: "python /etc/ansible/ec2-autoscaling/roles/launch/tasks/ter.py"

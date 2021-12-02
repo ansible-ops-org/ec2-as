@@ -1,0 +1,37 @@
+---
+
+- name: Footprint about AMI using ami-id
+  amazon.aws.ec2_ami_info:
+    image_ids: ami-b80
+  register: ami
+
+- debug: 
+    msg: "{{ ami.images[0].image_id }}"
+
+
+
+- name: Launch New Instance
+  amazon.aws.ec2:
+    region: "{{ region }}"      
+    key_name: "{{ keypair }}"
+    group: as-2
+    instance_type: "{{ instance_type }}"
+    image: "{{ ami.images[0].image_id }}"
+    wait: yes
+    wait_timeout: 500
+    count: 2
+    instance_tags:
+      Name: "apps"
+    monitoring: yes
+    vpc_subnet_id: subnet-8f9
+    assign_public_ip: yes
+  register: ec2
+
+
+
+  #- name: Add new instance to host group
+  #add_host:
+  #  hostname: "{{ item.public_ip }}"
+  #  groupname: launched
+  #loop: "{{ ec2.instances }}"  
+ 

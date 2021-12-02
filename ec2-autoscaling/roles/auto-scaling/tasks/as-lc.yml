@@ -1,0 +1,108 @@
+---
+
+- name: Find latest AMI  
+  ec2_ami_info:
+    owners: 758637906269
+    region: us-east-1
+    filters:
+      name: "ssm_v1-*"
+  register: findami  
+    
+
+- name: print out AMIs to terminal window
+  debug:
+    var: findami
+    
+- name: Sort the latest AMI 
+  set_fact:
+    latest_ami: >
+      {{ findami.images | sort(attribute='creation_date') | last }}    
+
+
+
+
+
+- name: Create Launch Configuration
+  ec2_lc:
+    region: "{{ region }}"
+    name: "test1"
+    image_id: "{{ latest_ami.image_id }}"
+    #image_id: "ami-0f1daa88c593aeb80"
+    key_name: "{{ keypair }}"
+    instance_type: "{{ instance_type }}"
+    instance_profile_name: "{{ iam_profile }}"
+    security_groups: "{{ security_groups }}"
+    volumes: "{{ volumes }}"
+    instance_monitoring: yes
+    assign_public_ip: yes
+  register: lc
+
+- name: print lc output
+  debug:
+    msg: "{{ lc }}"     
+
+
+
+- name: CREATE AS
+  shell: "aws autoscaling create-auto-scaling-group --auto-scaling-group-name test1 --launch-configuration-name test1 --min-size 1 --max-size 2 --health-check-type EC2 --health-check-grace-period 300 --vpc-zone-identifier subnet-085115e3dea5098f9,subnet-0713c84aef9a72c42"
+    
+
+- name: Retrieve current Auto Scaling Group properties
+  shell: "aws --region {{ region }} autoscaling describe-auto-scaling-groups --auto-scaling-group-names {{ asg_name }}"
+  register: asg
+
+
+  #- name: Set asg_properties variable from JSON output if the Auto Scaling Group already exists
+  #set_fact:
+  #  asg_properties: "{{ (asg.stdout | from_json).AutoScalingGroups[0] }}"
+  #when: (asg.stdout | from_json).AutoScalingGroups | count
+
+
+- name:  Configure Auto Scaling Group and perform rolling deploy
+  shell: "aws autoscaling update-auto-scaling-group --auto-scaling-group-name test1 --vpc-zone-identifier subnet-085115e3dea,subnet-0713c84a --launch-configuration-name test1 --min-size 2 --max-size 2 --desired-capacity 2 --health-check-type EC2 --health-check-grace-period 300"
+  register: cfg
+
+- debug:
+    msg: "{{ cfg }}"  
+
+
+- name: Configure Scaling Policies
+  ec2_scaling_policy:
+    region: "{{ region }}"
+    name: "test1"
+    asg_name: "test1"
+    state: present
+    adjustment_type: "{{ item.adjustment_type }}"
+    min_adjustment_step: "{{ item.min_adjustment_step }}"
+    scaling_adjustment: "{{ item.scaling_adjustment }}"
+    cooldown: "{{ item.cooldown }}"
+  with_items:
+    - name: "Increase Group Size"
+      adjustment_type: "ChangeInCapacity"
+      scaling_adjustment: +1
+      min_adjustment_step: 1
+      cooldown: 180
+      
+    - name: "Decrease Group Size"
+      adjustment_type: "ChangeInCapacity"
+      scaling_adjustment: -1
+      min_adjustment_step: 1
+      cooldown: 300
+  register: sp_result   
+
+
+- name: Determine Metric Alarm configuration
+  set_fact:
+    metric_alarms:
+      - name: "{{ asg_name }}-ScaleUp"
+        comparison: ">="
+        threshold: 50.0
+        alarm_actions:
+          - "{{ sp_result.results[0].arn }}"
+      - name: "{{ asg_name }}-ScaleDown"
+        comparison: "<="
+        threshold: 20.0
+        alarm_actions:
+          - "{{ sp_result.results[1].arn }}"  
+
+            

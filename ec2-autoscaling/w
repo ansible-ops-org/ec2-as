@@ -1,0 +1,10 @@
+
+
+
+1. launch a brand new t2.micro instances - done
+2. install packags on newly depoyed nodes - ny
+3. create new ami  from these deployed nodes - done
+3. create launch configuration with new ami - done
+4. create autoscaling group that points at the launch configuration with new ami - done
+
+

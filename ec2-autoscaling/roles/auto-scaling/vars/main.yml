@@ -1,0 +1,10 @@
+---
+# vars file for auto-scaling
+
+lc: test1
+asg_name: test1
+name: test1
+launch_config_name: test1
+zones: us-east-1a
+
+

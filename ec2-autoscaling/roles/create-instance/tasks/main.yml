@@ -1,0 +1,3 @@
+---
+# tasks file for launch
+- include_tasks: launch.yml
