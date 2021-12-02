@@ -8,5 +8,3 @@ aws autoscaling update-auto-scaling-group \
 
 
 
-subnet-085115e3dea5098f9 
-sg-05c55cf0c97047633
