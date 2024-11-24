@@ -13,6 +13,8 @@ First Play
 The first play is named “fetching instance details”. This play fetches the EC2 instance details 
 of the instances in the Auto Scaling Group (ASG) and registers them to the Ansible inventory.
 
+https://medium.com/@ssksreehari/launching-a-website-in-an-auto-scaling-group-using-dynamic-inventory-in-ansible-75723a3f1443
+
 
 Tasks:
 gathering instance details: This task uses the “amazon.aws.ec2_instance_info” module to fetch the EC2 instance details of instances in the ASG, and filters the instances based 
