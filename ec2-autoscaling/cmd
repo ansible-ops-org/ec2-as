@@ -12,3 +12,8 @@ new-scale.yml
 First Play
 The first play is named “fetching instance details”. This play fetches the EC2 instance details 
 of the instances in the Auto Scaling Group (ASG) and registers them to the Ansible inventory.
+
+
+In summary, this Ansible playbook fetches the EC2 instance details of instances in the Auto Scaling Group, registers them to the Ansible inventory, 
+installs the necessary packages, configures the Apache web server, and deploys the website files to the document root of the web server. 
+This playbook helps automate the process of deploying a website to an Auto Scaling Group using Ansible.
